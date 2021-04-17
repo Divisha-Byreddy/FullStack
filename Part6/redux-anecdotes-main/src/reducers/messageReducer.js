@@ -1,3 +1,5 @@
+let timer
+
 const messageReducer = (state = null,action) =>{
   switch(action.type){
     case 'SET_MESSAGE' :
@@ -8,23 +10,22 @@ const messageReducer = (state = null,action) =>{
   return state
 }
 
+const restartTimer = (dispatch,time) => {
+  clearTimeout(timer)
+  timer = setTimeout(() =>{
+      dispatch({
+        type : 'REMOVE_MESSAGE'
+      })
+    },time*1000)
+}
+
 export const setMessage = (message,time) =>{
   return dispatch => {
     dispatch({
       type : 'SET_MESSAGE',
       message
     })
-    setTimeout(() =>{
-      dispatch({
-        type : 'REMOVE_MESSAGE'
-      })
-    },time*1000)
-  }
-}
-
-export const clearMessage = () =>{
-  return{
-    type : 'REMOVE_MESSAGE' 
+    restartTimer(dispatch,time)
   }
 }
 
