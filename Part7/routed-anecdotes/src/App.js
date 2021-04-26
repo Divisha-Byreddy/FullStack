@@ -3,17 +3,19 @@ import {
   BrowserRouter as Router,
   Switch, Route,Link, useRouteMatch, useHistory
 } from 'react-router-dom'
+import useField from './hooks'
+import _ from 'lodash'
 
 const Menu = ({anecdotes, addNew, message}) => {
   const padding = {
     paddingRight: 5
   }
 
-  const match = useRouteMatch('/:id')
-  const anecdote = match ? anecdotes.find(x => x.id == Number(match.params.id)) : null
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match ? anecdotes.find(x => x.id === match.params.id) : null
   
   return (
-    <div>
+    <Router>
       <div>
         <Link style = {padding} to ='/'>anecdotes</Link>
         <Link style = {padding} to = '/create'>create new</Link>
@@ -30,7 +32,7 @@ const Menu = ({anecdotes, addNew, message}) => {
         <Route path = '/about'>
           <About />
         </Route>
-        <Route path = '/:id'>
+        <Route path = '/anecdotes/:id'>
           <Anecdote anecdote = {anecdote}/>
         </Route>
         <Route to = '/'>
@@ -38,14 +40,14 @@ const Menu = ({anecdotes, addNew, message}) => {
         </Route>
       </Switch>
       <Footer />
-    </div>
+    </Router>
   )
 }
 
 const Notification = ({message}) => {
   const style = {
     border: 'solid',
-    borderColor : 'red',
+    borderColor : 'green',
     padding: 5,
     borderWidth: 3
   }
@@ -61,7 +63,7 @@ const Notification = ({message}) => {
 
 const Anecdote = ({anecdote}) => {
   const padding = {
-    paddingBottom: 5
+    paddingBottom: 10
   }
   return(
     <div>
@@ -80,7 +82,7 @@ const AnecdoteList = ({ anecdotes }) => (
     <ul>
       {anecdotes.map(anecdote => 
         <li key={anecdote.id} >
-          <Link to = {`/${anecdote.id}`}>{anecdote.content}</Link>
+          <Link to = {`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
         </li>)
       }
     </ul>
@@ -110,40 +112,47 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('content')
+  const author = useField('author')
+  const info = useField('info')
 
   const history = useHistory()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content : content.value,
+      author : author.value,
+      info : info.value,
       votes: 0
     })
     history.push('/')
   }
 
+  const handleReset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} id = 'createAnecdote' onReset = {handleReset}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...(_.omit(content,['reset']))} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...(_.omit(author,['reset']))} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...(_.omit(info,['reset']))} />
         </div>
-        <button>create</button>
+        <button type = 'submit'>create</button>
+        <button type = 'reset' >reset</button>
       </form>
     </div>
   )
@@ -167,7 +176,7 @@ const App = () => {
       id: '2'
     }
   ])
-  
+
   const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
@@ -201,4 +210,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App
