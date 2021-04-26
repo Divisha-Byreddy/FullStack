@@ -2,25 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import _ from 'lodash'
-
-const useField = (type) => {
-  const [value, setValue] = useState('')
-
-  const onChange = (event) => {
-    setValue(event.target.value)
-  }
-
-  const resetValue = () =>[
-    setValue('')
-  ]
-
-  return {
-    type,
-    value,
-    onChange,
-    resetValue
-  }
-}
+import useField from './hooks'
 
 const useResource =  (baseUrl) => {
   const [resources, setResources] = useState([])
@@ -85,7 +67,7 @@ const App = () => {
         number <input {...(_.omit(number, ['resetValue']))} />
         <button>create</button>
       </form>
-      {persons.map(n => <li key={n.id}>{n.name} {n.number}</li>)}
+      {persons.map(n => <p key={n.id}>{n.name} {n.number}</p>)}
     </div>
   )
 }
