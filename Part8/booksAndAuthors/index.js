@@ -90,7 +90,7 @@ const pubsub = new PubSub()
 //   }, 
 // ]
 
-const MONGODB_URI = `mongodb://fullstack:fullstack@cluster0-shard-00-00.tngae.mongodb.net:27017,cluster0-shard-00-01.tngae.mongodb.net:27017,cluster0-shard-00-02.tngae.mongodb.net:27017/graphql?ssl=true&replicaSet=atlas-syzbo0-shard-0&authSource=admin&retryWrites=true`
+const MONGODB_URI = process.env.MONGODB_URI
 
 console.log('connecting to', MONGODB_URI)
 
